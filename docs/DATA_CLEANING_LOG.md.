@@ -1,0 +1,19 @@
+# Data Cleaning & Preparation Log
+
+This document outlines the data validation, cleaning, and transformation steps applied to prepare the raw container shipment records (clean_container_shipments) for analysis in MySQL and visualization in Tableau Public.
+
+## 1. Dataset Summary
+- *Source Table:* clean_container_shipments
+- *Final Record Count:* 320 unique container shipments (CNTD(Container Id) = 320)
+- *Granularity:* One row per container shipment
+
+## 2. Cleaning & Standardization Steps
+- *Duplicate Removal:* Verified Container Id uniqueness across the dataset so shipment counts and cost aggregations are not inflated by duplicate records.
+- *Text & Category Standardization:* Standardized categorical fields (Clearing Agent, Origin Port, and Cargo Category) by trimming whitespace and ensuring consistent naming conventions across agents (Apex Maritime Ltd, Horizon Port Clearing, Tincan Express Logistics, Vanguard Freight Services).
+- *Date Validation:* Formatted arrival and clearance date fields (Arrival Date, Clearance Date) into valid date types to accurately calculate Turnaround Days and group performance by arrival month.
+- *Null Handling on Financial Fields:* Preserved shipments with zero demurrage ($0 / NULL demurrage cost) rather than dropping on-time shipments, ensuring average turnaround and total volume metrics reflect all 320 containers.
+
+## 3. Calculated Metrics & Business Logic
+- *Total Port Charges (Tableau Calculated Field):*
+  ```tableau
+  [Clearing Fee Usd] + ZN([Demurrage Cost Usd])
